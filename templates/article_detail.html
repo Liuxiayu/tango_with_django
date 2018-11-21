@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ blog.title }}</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.min.css">
+     <link rel="stylesheet" href="/static/mystyle.css">
+    <link rel="stylesheet" href="/static/article_detail.css">
+    <link rel="stylesheet" href="/static/theme/{{ blog.theme }}">
+        <link rel="icon" href="/static/img/whale.ico" type="images/x-ico" />
+    <script src="/static/jquery-3.3.1.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+{#<div class="header">#}
+{#    <p>{{ blog.title }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ><a href="/index/" class="index1">网站首页</a></span>#}
+{#        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ><a href="/blog/{{ article.user.username }}" class="index2">个人首页</a></span></p>#}
+{#</div>#}
+<div class="navbar navbar-default navbar-fixed-top navbar_self" role="navigation">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+                            <span class="sr-only">切换导航</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                         </button>
+                        <a class="navbar-brand" href="/">老几的Blog</a>
+                    </div>
+
+
+                    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="/">
+                                    <span class="glyphicon glyphicon-home"></span> 首页
+                                </a>
+                            </li>
+                                <li>
+                                <a href="/blog/">
+                                    <span class="glyphicon glyphicon-pencil"></span> 博客
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a href="/blog/{{article.user.username }}/">
+                                    <span class="glyphicon glyphicon-pencil"></span>{{ article.user.username }}的博客
+                                </a>
+                            </li>
+
+                        </ul>
+
+                        <form action="/search_article/" class="navbar-form navbar-right" method="post">
+                            <input name="search_article_name" type="text" placeholder="搜索文章" class="form-control">
+                            <button type="submit">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </form>
+
+                        <ul id="user_part" class="nav navbar-nav navbar-right">
+                            {% if request.user.username %}
+               <li><a href="/blog/{{ request.user.username }}" target="_blank"><i class="fa fa-user" ></i>&nbsp;{{ request.user.username }}</a></li>
+                 <li><a href="/blog/backend/add_article/" target="_blank"><i class="fa fa-pencil"></i>&nbsp;写文章</a></li>
+                <li><a href="/logout/"><i class="fa fa-toggle-on"></i>&nbsp;注销</a></li>
+
+                                {% else %}
+                                <li><a href="/login/"><i class="fa fa-toggle-off"></i>&nbsp;登录</a></li>
+                                <li><a href="/reg/"><i class="fa fa-user"></i>&nbsp;注册</a></li>
+
+
+                            {% endif %}
+
+
+                        </ul>
+                    </div>
+                </div>
+
+
+<div class="container">
+    <div class="col-md-2">
+{#            {% load my_tags %}#}
+{##}
+{#            {% get_left_menu username %}#}
+        <div class="panel panel-default">
+<div class="panel-heading">个人博客文章分类</div>
+<div class="panel-body">
+    {% for category in category_list %}
+        <p><i class="fa fa-folder-o" aria-hidden="true"></i>&nbsp;<a href="/blog/{{ username }}/category/{{ category.title }}/" target="_blank">{{ category.title }}({{ category.c }})</a></p>
+    {% endfor %}
+
+</div>
+</div>
+{#<div class="panel panel-default">#}
+{#    <div class="panel-heading">文章标签</div>#}
+{#    <div class="panel-body">#}
+{#        {% for tag in tag_list %}#}
+{#            <p><a href="/blog/{{ username }}/tag/{{ tag.title }}/">{{ tag.title }}({{ tag.c }})</a></p>#}
+{#        {% endfor %}#}
+{##}
+{#    </div>#}
+{#</div>#}
+<div class="panel panel-default">
+    <div class="panel-heading">日期归档</div>
+    <div class="panel-body">
+        {% for archive in archive_list %}
+            <p><a href="/blog/{{ username }}/archive/{{ archive.archive_ym }}/">{{ archive.archive_ym }}({{ archive.c }})</a></p>
+        {% endfor %}
+
+    </div>
+</div>
+
+        </div>
+        <div class="col-md-10">
+            <div class="article-detail">
+        <h1>{{ article.title }}</h1>
+        <p>{{ article.articledetail.content|safe }}</p>
+    </div>
+
+    <div class="poll clearfix">
+        <div id="div_digg">
+            <div class="diggit action">
+                <span class="diggnum" id="digg_count">{{ article.up_count }}</span>
+            </div>
+            <div class="buryit action">
+                <span class="burynum" id="bury_count">{{ article.down_count }}</span>
+            </div>
+            <div class="clear"></div>
+            <div class="diggword" id="digg_tips" style="color: red;"></div>
+        </div>
+    </div>
+
+
+    {#    <p>评论树</p>#}
+    {#    <div class="comment_tree"></div>#}
+
+    {#    评论区#}
+    <p>评论列表</p>
+    <ul class="comment_list">
+        {% for comment in comment_list %}
+            <li class="list-group-item">
+                <div>
+                    <a href="">#{{ forloop.counter }}楼</a> &nbsp;&nbsp;
+                    <span style="color: gray">{{ comment.create_time|date:"Y-m-d H:i" }}</span> &nbsp;&nbsp;
+                    <a href=""><span>{{ comment.user.username }}</span></a>
+                    <a class="pull-right reply_btn" username="{{ comment.user.username }}"
+                       comment_pk="{{ comment.pk }}"><span>回复</span></a>
+                </div>
+                {% if comment.parent_comment_id %}
+                    <div class="pid_info well">
+                        <p> {{ comment.parent_comment.user.username }}:
+                            &nbsp;&nbsp;&nbsp;{{ comment.parent_comment.content|safe }} </p>
+                    </div>
+                {% endif %}
+
+                <div class="con">
+                    <p>
+                        {{ comment.content|safe }}
+                    </p>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% if request.user.username %}
+        <div class="comment">
+            <p>昵称：<input type="text" id="tbCommentAuthor" class="author" disabled="disabled" size="50"
+                         value="{{ request.user.username }}"></p>
+            <p>评论内容</p>
+            {#         <textarea name="" id="comment_content" cols="60" rows="10"></textarea>#}
+            <div id="div1">
+                <input type="text" id="textinput" style="display: none">
+            </div>
+            <textarea id="comment_content" style="display: none;width:100%; height:200px;"></textarea>
+
+            <p>
+                <button id="comment_btn">提交评论</button>
+            </p>
+        </div>
+    {% else %}
+        <a href="/login/">评论，请登录</a>
+    {% endif %}
+
+
+
+    {% csrf_token %}
+    <script>
+        $("#div_digg .action").click(function () {
+            // 点赞或踩灭
+            console.log("{{ request.user.username }}");
+            if ("{{ request.user.username }}") {
+
+                var is_up = $(this).hasClass("diggit");
+                var article_id = "{{ article.pk }}";
+
+
+                $.ajax({
+                    url: "/blog/up_down/",
+                    type: "post",
+                    data: {
+                        is_up: is_up,
+                        article_id: article_id,
+                        csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
+                    },
+                    success: function (data) {
+                        console.log(data);
+
+
+                        if (data.state) {// 赞或者灭成功
+
+                            if (is_up) {
+                                var val = $("#digg_count").text();
+                                val = parseInt(val) + 1;
+                                $("#digg_count").text(val);
+                            } else {
+                                var val = $("#bury_count").text();
+                                val = parseInt(val) + 1;
+                                $("#bury_count").text(val);
+                            }
+                        }
+                        else {    // 重复提交
+
+                            if (data.fisrt_action) {
+                                $("#digg_tips").html("您已经推荐过");
+                            } else {
+                                $("#digg_tips").html("您已经反对过");
+                            }
+
+                            setTimeout(function () {
+                                $("#digg_tips").html("")
+                            }, 1000)
+
+                        }
+
+                    }
+                })
+
+            }
+            else {
+                location.href = "/login/"
+
+            }
+
+        })
+
+
+    </script>
+    <script>
+        // 获取评论数据，展示评论树结构
+        $.ajax({
+            url: "/blog/comment_tree/" + '{{ article.pk }}/',
+            success: function (data) {
+                console.log(data);
+
+                $.each(data, function (index, comment_dict) {
+                    var s = '<div class="comment_item" comment_id=' + comment_dict.pk + '> <span class="content">' + comment_dict.content + '</span> </div>'
+                    if (comment_dict.parent_comment_id) {
+                        // 子评论
+                        pid = comment_dict.parent_comment_id;
+                        $("[comment_id=" + pid + "]").append(s);
+                    }
+                    else {   //  根评论
+                        $(".comment_tree").append(s);
+                    }
+                })
+            }
+        });
+
+        //提交评论
+        var pid = "";
+        $("#comment_btn").click(function () {
+            var article_id = "{{ article.pk }}";
+            var content = $("#comment_content").val();
+            if (pid) {
+                var index = content.indexOf("\n")
+                content = content.slice(index + 1)
+            }
+
+            $.ajax({
+                url: "/blog/comment/",
+                type: "post",
+                data: {
+                    article_id: article_id,
+                    content: content,
+                    pid: pid,
+                    csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+                },
+                success: function (data) {
+                    console.log(data);
+                    var create_time = data.create_time;
+                    var content = data.content;
+                    var username = data.username;
+                    var comment_li = '<li class="list-group-item"><div><span style="color: gray">' + create_time + '</span> &nbsp;&nbsp; <a href=""><span>' + username + '</span></a></div> <div class="con"> <p> ' + content + ' </p> </div> </li>';
+
+                    $(".comment_list").append(comment_li);
+
+                    // 清空文本框
+                    $("#comment_content").val('');
+                    // 清空pid
+                    pid = "";
+                    $('#div1').html("");
+                    var E = window.wangEditor;
+                    var editor = new E('#div1');
+                    var $comment_content = $('#comment_content');
+                    editor.customConfig.onchange = function (html) {
+                        // 监控变化，同步更新到 textarea
+                        $comment_content.val(html)
+                    };
+                    editor.create();
+                    // 初始化 textarea 的值
+                    $comment_content.val(editor.txt.html())
+                }
+            })
+        });
+
+
+        //回复评论
+        $(".list-group-item .reply_btn").click(function () {
+
+            $("#textinput").focus();
+
+            var v = "回复" + $(this).attr("username") + "的评论：" + "\n";
+
+            $("#div1").text(v);
+            var E = window.wangEditor;
+            var editor = new E('#div1');
+            var $comment_content = $('#comment_content');
+            editor.customConfig.onchange = function (html) {
+                // 监控变化，同步更新到 textarea
+                $comment_content.val(html)
+            };
+            editor.create();
+            // 初始化 textarea 的值
+            $comment_content.val(editor.txt.html());
+
+            pid = $(this).attr("comment_pk");
+        })
+    </script>
+    <script src="/static/wangEditor.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/wangEditor.js"></script>
+    <script type="text/javascript">
+        var E = window.wangEditor;
+        var editor = new E('#div1');
+        var $comment_content = $('#comment_content');
+        editor.customConfig.onchange = function (html) {
+            // 监控变化，同步更新到 textarea
+            $comment_content.val(html)
+        };
+        editor.create();
+        // 初始化 textarea 的值
+        $comment_content.val(editor.txt.html())
+    </script>
+        </div>
+    </div>
+
+
+<script src="/static/draw_line.js"></script>
+<script src="/static/onclick.js"></script>
+
+</body>
+</html>

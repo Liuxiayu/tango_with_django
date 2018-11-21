@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文章首页</title>
+       <link rel="stylesheet" href="/static/mystyle.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/blog_style.css">
+        <link rel="icon" href="/static/img/whale.ico" type="images/x-ico" />
+
+
+</head>
+<body>
+
+
+{#<nav class="navbar navbar-inverse">#}
+{#    <div class="container-fluid">#}
+{#        <!-- Brand and toggle get grouped for better mobile display -->#}
+{#        <div class="navbar-header">#}
+{#            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"#}
+{#                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">#}
+{#                <span class="sr-only">Toggle navigation</span>#}
+{#                <span class="icon-bar"></span>#}
+{#                <span class="icon-bar"></span>#}
+{#                <span class="icon-bar"></span>#}
+{#            </button>#}
+{#            <a class="navbar-brand" href="#">The Blog</a>#}
+{#        </div>#}
+{##}
+{#        <!-- Collect the nav links, forms, and other content for toggling -->#}
+{#        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">#}
+{#            <ul class="nav navbar-nav">#}
+{#                <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>#}
+{#                <li><a href="#">Link</a></li>#}
+{#            </ul>#}
+{#            <ul class="nav navbar-nav navbar-right">#}
+{#                {% if request.user.username %}#}
+{#                    <li><a href="#">{{ request.user.username }}</a></li>#}
+{#                    <li class="dropdown">#}
+{#                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"#}
+{#                           aria-expanded="false">个人中心<span class="caret"></span></a>#}
+{#                        <ul class="dropdown-menu">#}
+{#                            <li><a href="/blog/{{ request.user }}">我的首页</a></li>#}
+{#                            <li role="separator" class="divider"></li>#}
+{#                            <li><a href="/logout/">注销</a></li>#}
+{#                        </ul>#}
+{#                    </li>#}
+{#                {% else %}#}
+{#                    <li><a href="/login/">登录</a></li>#}
+{#                    <li><a href="/reg/">注册</a></li>#}
+{#                {% endif %}#}
+{#            </ul>#}
+{#        </div><!-- /.navbar-collapse -->#}
+{#    </div><!-- /.container-fluid -->#}
+{#</nav>#}
+
+<div class="navbar navbar-default navbar-fixed-top daohang" role="navigation">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+                            <span class="sr-only">切换导航</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                         </button>
+                        <a class="navbar-brand" href="/">老几的Blog</a>
+                    </div>
+
+
+                    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="/">
+                                    <span class="glyphicon glyphicon-home"></span> 首页
+                                </a>
+                            </li>
+                                <li class="active">
+                                <a href="/blog/">
+                                    <span class="glyphicon glyphicon-pencil"></span> 博客
+                                </a>
+                            </li>
+                        </ul>
+
+                        <form action="/search_article/" class="navbar-form navbar-right" method="post">
+                            <input name="search_article_name" type="text" placeholder="搜索文章" class="form-control">
+                            <button type="submit">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </form>
+
+                        <ul id="user_part" class="nav navbar-nav navbar-right">
+                            {% if request.user.username %}
+
+               <li><a href="/blog/{{ request.user.username }}" target="_blank"><i class="fa fa-user" target="_blank"></i>&nbsp;{{ request.user.username }}</a></li>
+                 <li><a href="/blog/backend/add_article/"  target="_blank"><i class="fa fa-pencil"></i>&nbsp;写文章</a></li>
+                <li><a href="/logout/"><i class="fa fa-toggle-on"></i>&nbsp;注销</a></li>
+
+                                {% else %}
+                                <li><a href="/login/"><i class="fa fa-toggle-off"></i>&nbsp;登录</a></li>
+                                <li><a href="/reg/"><i class="fa fa-user"></i>&nbsp;注册</a></li>
+
+                            {% endif %}
+
+
+                        </ul>
+                    </div>
+                </div>
+
+
+<!-- 主页面 开始-->
+
+<div class="container">
+    <div class="row row_self">
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">博客文章分类</div>
+                <div class="panel-body">
+                    {% for category in category_list %}
+                        <p><i class="fa fa-folder-o" aria-hidden="true"></i>
+                            <a href="/blog/category/{{ category.title }}/" target="_blank">{{ category.title }}({{ category.c }})</a>
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">今日阅读排行</div>
+                <div class="panel-body">
+            <ul class="list">
+                {% for article in article_list_list %}
+                    <li>
+                        {% if article.today_read_num <= 0 %}
+                       <i class="fa   fa-chevron-right" aria-hidden="true"></i>
+                        {% else %}
+                   <i class="fa fa-arrow-up"  aria-hidden="true"></i>
+                         {% endif %}
+                        <span class="read-num">{{ article.today_read_num }}</span>
+                        <a href="/blog/{{ article.user.username }}/article/{{ article.pk }}/"
+                           target="_blank">{{ article.title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">随机推荐</div>
+                <div class="panel-body">
+                     <ul class="list">
+                {% for article in article_random %}
+                    <li  class=" left_li" >
+{#                    <i class="fa fa-book"></i>#}
+                        <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+                        <a href="/blog/{{ article.user.username }}/article/{{ article.pk }}/"
+                           target="_blank">{{ article.title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">猜你喜欢</div>
+                <div class="panel-body">
+                      <ul class="list">
+                {% for article in article_random_2 %}
+                    <li  class=" left_li" >
+{#                    <i class="fa fa-book"></i>#}
+                        <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+                        <a href="/blog/{{ article.user.username }}/article/{{ article.pk }}/"
+                           target="_blank">{{ article.title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="col-md-9">
+            <!-- 文章列表 开始 -->
+
+            <div class="filter blog-border">
+                <div class="filter-item">
+
+{#<div class="btn-group btn-group-justified" role="group" aria-label="...">#}
+{#     {% for category in category_list %}#}
+{#           <div class="btn-group " role="group">#}
+{#    <button type="button" class="btn btn-default category_btn"  onclick="javascript:window.location.href='/blog/category/{{ category.title }}/' ">{{ category.title }}({{ category.c }})</button>#}
+{#  </div>#}
+{#     {% endfor %}#}
+
+{#</div>#}
+                       <ul>
+                    <li class="tag tag-recommend">
+                        <input id="recommend" type="checkbox" name="recommend" value="true">
+                        <label for="recommend">推荐</label>
+                    </li>
+
+                    <li class="tag tag-recommend">
+                        <input id="check_all" type="checkbox" name="check_all" value="blog" checked="" onclick="checkboxOnclick(this)">
+                        <label for="check_all">全部类别&nbsp;({{ article_count }})</label>
+                    </li>
+                    {% for category in category_list %}
+                        <li class="tag">
+                            <input id="tag_input" type="checkbox"  name="{{ category.title }}" value="{{ category.title }}" onclick="checkboxOnclick_category(this)">
+                            <label for="tag_input">{{ category.title }}&nbsp;({{ category.c }})</label>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                </div>
+            </div>
+
+
+            <form action="/search_article/" method="post">
+                <div class="input-group col-md-4">
+                    <input type="text" class="form-control" name="search_article_name" placeholder="搜索你想要的文章">
+                    <span class="input-group-btn"><button class="btn btn-default" type="submit">搜索</button></span>
+                </div><!-- /input-group -->
+            </form>
+
+            <div class="article-list">
+                {% for article in article_list_page %}
+                    <div class="article">
+                        <h3 class="h3_self">
+                            <a href="/blog/{{ article.user.username }}/article/{{ article.pk }}/">{{ article.title }}</a>
+                        </h3>
+                        <div class="media">
+                            <div class="media-left">
+                                <a href="#">
+                                    <img class="media-object author-img" src="/media/{{ article.user.avatar }}"
+                                         alt="...">
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <p>{{ article.desc }}</p>
+                            </div>
+                        </div>
+                        <div class="article-footer">
+                            <span><i class="fa fa-user-o" aria-hidden="true"></i>&nbsp;&nbsp;<a
+                                    href="/blog/{{ article.user.username }}/">{{ article.user.username }}</a></span>发布于
+                            <span>{{ article.create_time|date:'Y-m-d H:i:s' }}</span>
+                            {#                            <span class="glyphicon glyphicon-comment">评论({{ article.comment_count }})</span>#}
+                            {#                            <span class="glyphicon glyphicon-thumbs-up">点赞({{ article.up_count }})</span>#}
+                            <span><i class="fa fa-commenting-o fa-fw"
+                                     aria-hidden="true"></i>评论({{ article.comment_count }})</span>
+                            <span><i class="fa fa-thumbs-o-up fa-fw"
+                                     aria-hidden="true"></i>点赞({{ article.up_count }})</span>
+                            <span><i class="fa fa-thumbs-o-down fa-fw" aria-hidden="true"></i>踩({{ article.down_count }})</span>
+                            <span><i class="fa fa-book" aria-hidden="true"></i>阅读({{ article.read_num }})</span>
+                        </div>
+                        <hr>
+                    </div>
+                {% endfor %}
+
+            </div>
+            <!-- 文章列表 结束-->
+
+
+        </div>
+{#        <div class="col-md-2">#}
+{#            <div class="panel panel-primary">#}
+{#                <div class="panel-heading">随机推荐</div>#}
+{#                <div class="panel-body">#}
+{#                    Panel content#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{#            <div class="panel panel-info">#}
+{#                <div class="panel-heading">猜你喜欢</div>#}
+{#                <div class="panel-body">#}
+{#                    Panel content#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{#        </div>#}
+
+        <div class="pag">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {{ page_html|safe }}
+                </ul>
+            </nav>
+        </div>
+
+
+    </div>
+</div>
+<!-- 主页面 结束-->
+</div>
+
+
+<script src="/static/jquery-3.3.1.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/draw_line.js"></script>
+<script src="/static/onclick.js"></script>
+<script>
+
+    function checkboxOnclick(checkbox) {
+        if ($("#check_all").is(':checked')) {
+            window.location.href = "/blog/";
+            console.log("{{ category.title }}")
+        } else {
+        }}
+    </script>
+{#<script>#}
+    {#function checkboxOnclick_category(checkbox) {#}
+    {#            if ($("#tag_input").is(':checked')) {#}
+    {#                console.log($("#tag_input"));#}
+    {#        window.location.href = "/blog/category/"+$("#tag_input").attr("value")+"/";#}
+    {#    } else {#}
+    {#    }#}
+{#    $('input:checkbox').click(function () {#}
+{#         if ($("#tag_input").is(':checked')){#}
+{#                    console.log($("#tag_input"));#}
+{#            window.location.href = "/blog/category/"+$("#tag_input").attr("value")+"/";}#}
+{#    })#}
+{#</script>#}
+<script>
+       function checkboxOnclick_category(checkbox){
+            //$('input:checkbox:checked') 等同于 $('input[type=checkbox]:checked')
+            //意思是选择被选中的checkbox
+            $.each($('input:checkbox:checked'),function(){
+                $("#check_all").removeAttr("checked");
+             $(this).attr("checked","checked");
+                window.location.href = "/blog/category/"+$(this).val()+"/";
+
+            });}
+</script>
+
+</body>
+</html>

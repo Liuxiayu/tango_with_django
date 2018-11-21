@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎登录</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+    <link rel="stylesheet" href="/static/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/assets/css/form-elements.css">
+    <link rel="stylesheet" href="/static/assets/css/style.css">
+    <link rel="stylesheet" href="/static/login.css">
+    <link rel="icon" href="/static/img/whale.ico" type="images/x-ico" />
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    <!-- Favicon and touch icons -->
+    {#        <link rel="shortcut icon" href="/static/assets/ico/favicon.png">#}
+{#    <link rel="apple-touch-icon-precomposed" sizes="144x144"#}
+{#          href="/static/assets/ico/apple-touch-icon-144-precomposed.png">#}
+{#    <link rel="apple-touch-icon-precomposed" sizes="114x114"#}
+{#          href="/static/assets/ico/apple-touch-icon-114-precomposed.png">#}
+{#    <link rel="apple-touch-icon-precomposed" sizes="72x72"#}
+{#          href="/static/assets/ico/apple-touch-icon-72-precomposed.png">#}
+{#    <link rel="apple-touch-icon-precomposed" href="/static/assets/ico/apple-touch-icon-57-precomposed.png">#}
+    <script src="/static/jquery-3.3.1.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+<!-- Content -->
+<div class="top-content">
+
+    <div class="inner-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2 text">
+
+                    <h1><strong>Bootstrap</strong> Modal Registration Form</h1>
+                    <div class="description">
+                        <p>
+                            This is a free responsive modal registration form made with Bootstrap.
+                            Download it on <a href="#"><strong>AZMIND</strong></a>, customize and use it as you like!
+                        </p>
+                    </div>
+                    <div class="top-big-link">
+                        <a class="btn btn-link-1 launch-modal" href="#" data-modal-id="modal-register">请登录</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal fade" id="modal-register" tabindex="-1" role="dialog" aria-labelledby="modal-register-label"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h3 class="modal-title" id="modal-register-label">Sign in now</h3>
+                <p>请填入以下登录信息</p>
+            </div>
+
+            <div class="modal-body">
+
+                <form role="form" action="/login/" method="post" class="registration-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username" class="sr-only">用户名</label>
+                        <span>用户名</span>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="用户名">
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="sr-only">密码</label>
+                        <span>密码</span>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="密码">
+                    </div>
+                    <div class="form-group">
+                        <!-- 放置极验的滑动验证码 -->
+                        <div id="popup-captcha"></div>
+                    </div>
+                    <span class="login-error has-error"></span>
+                    <button type="button" class="btn" id="login-button">登录</button>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Javascript -->
+<script src="/static/jquery-3.3.1.js"></script>
+<script src="/static/assets/js/jquery-1.11.1.min.js"></script>
+<script src="/static/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/assets/js/jquery.backstretch.min.js"></script>
+<script src="http://static.geetest.com/static/tools/gt.js"></script>
+<script src="/static/assets/js/scripts.js"></script>
+
+<!--[if lt IE 10]>
+            <script src="/static/assets/js/placeholder.js"></script>
+        <![endif]-->
+
+
+<script src="/static/draw_line.js"></script>
+<script src="/static/onclick.js"></script>
+<script>
+
+    // 极验 发送登录数据的
+    var handlerPopup = function (captchaObj) {
+        // 成功的回调
+        captchaObj.onSuccess(function () {
+            var validate = captchaObj.getValidate();
+            // 1. 取到用户填写的用户名和密码 -> 取input框的值
+            var username = $("#username").val();
+            var password = $("#password").val();
+            $.ajax({
+                url: "/login3/", // 进行二次验证
+                type: "post",
+                dataType: "json",
+                data: {
+                    username: username,
+                    password: password,
+                    csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
+                    geetest_challenge: validate.geetest_challenge,
+                    geetest_validate: validate.geetest_validate,
+                    geetest_seccode: validate.geetest_seccode
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.status) {
+                        // 有错误，在页面上提示
+                        $(".login-error").text(data.msg);
+                    } else {
+                        // 登陆成功
+                        location.href = data.msg;
+                    }
+                }
+            });
+        });
+
+        $("#login-button").click(function () {
+            captchaObj.show();
+        });
+        // 将验证码加到id为captcha的元素里
+        captchaObj.appendTo("#popup-captcha");
+        // 更多接口参考：http://www.geetest.com/install/sections/idx-client-sdk.html
+    };
+    // 当input框获取焦点时将之前的错误清空
+    $("#username,#password").focus(function () {
+        // 将之前的错误清空
+        $(".login-error").text("");
+    });
+
+    // 验证开始需要向网站主后台获取id，challenge，success（是否启用failback）
+    $.ajax({
+        url: "/pc-geetest/register?t=" + (new Date()).getTime(), // 加随机数防止缓存
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            // 使用initGeetest接口
+            // 参数1：配置参数
+            // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它做appendTo之类的事件
+            initGeetest({
+                gt: data.gt,
+                challenge: data.challenge,
+                product: "popup", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+                offline: !data.success // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+                // 更多配置参数请参见：http://www.geetest.com/install/sections/idx-client-sdk.html#config
+            }, handlerPopup);
+        }
+    })
+
+</script>
+
+</body>
+</html>

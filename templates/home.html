@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ blog.title }}</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.min.css">
+     <link rel="stylesheet" href="/static/mystyle.css">
+    <link rel="stylesheet" href="/static/article_detail.css">
+    <link rel="stylesheet" href="/static/theme/{{ blog.theme }}">
+        <link rel="icon" href="/static/img/whale.ico" type="images/x-ico" />
+    <script src="/static/jquery-3.3.1.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+
+<div class="navbar navbar-default navbar-fixed-top navbar_self" role="navigation">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+                            <span class="sr-only">切换导航</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                         </button>
+                        <a class="navbar-brand" href="/">老几的Blog</a>
+                    </div>
+
+
+                    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="/index/">
+                                    <span class="glyphicon glyphicon-home"></span> 首页
+                                </a>
+                            </li>
+                                <li>
+                                <a href="/blog/">
+                                    <span class="glyphicon glyphicon-pencil"></span> 博客
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a href="/blog/{{ user.username }}/">
+                                    <span class="glyphicon glyphicon-pencil"></span>{{ user.username }}的博客
+                                </a>
+                            </li>
+
+                        </ul>
+
+                        <form action="/search_article/" class="navbar-form navbar-right" method="post">
+                            <input name="search_article_name" type="text" placeholder="搜索文章" class="form-control">
+                            <button type="submit">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </form>
+
+                        <ul id="user_part" class="nav navbar-nav navbar-right">
+                            {% if request.user.username %}
+
+
+               <li><a href="/blog/{{ request.user.username }}" target="_blank"><i class="fa fa-user"></i>&nbsp;{{ request.user.username }}</a></li>
+                 <li><a href="/blog/backend/add_article/" target="_blank"><i class="fa fa-pencil"></i>&nbsp;写文章</a></li>
+                <li><a href="/logout/"><i class="fa fa-toggle-on"></i>&nbsp;注销</a></li>
+
+                                {% else %}
+                                <li><a href="/login/"><i class="fa fa-toggle-off"></i>&nbsp;登录</a></li>
+                                <li><a href="/reg/"><i class="fa fa-user"></i>&nbsp;注册</a></li>
+
+                            {% endif %}
+
+
+                        </ul>
+                    </div>
+                </div>
+
+
+<div class="container">
+<div class="row row_self">
+    <div class="col-md-2">
+{#            {% load my_tags %}#}
+{##}
+{#            {% get_left_menu username %}#}
+        <div class="panel panel-default">
+<div class="panel-heading">个人博客文章分类</div>
+<div class="panel-body">
+    {% for category in category_list %}
+        <p><i class="fa fa-folder-o" aria-hidden="true"></i>&nbsp;<a href="/blog/{{ username }}/category/{{ category.title }}/" target="_blank">{{ category.title }}({{ category.c }})</a></p>
+    {% endfor %}
+
+</div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">文章标签</div>
+    <div class="panel-body">
+        {% for tag in tag_list %}
+            <p><a href="/blog/{{ username }}/tag/{{ tag.title }}/">{{ tag.title }}({{ tag.c }})</a></p>
+        {% endfor %}
+
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">日期归档</div>
+    <div class="panel-body">
+        {% for archive in archive_list %}
+            <p><a href="/blog/{{ username }}/archive/{{ archive.archive_ym }}/">{{ archive.archive_ym }}({{ archive.c }})</a></p>
+        {% endfor %}
+
+    </div>
+</div>
+
+        </div>
+   <div class="col-md-10">
+ <!-- 个人博客列表 开始-->
+        <div class="article-list">
+            {% for article in article_list %}
+                <div class="article">
+                    <p class="article-title"><a href="/blog/{{ article.user.username }}/article/{{ article.pk }}/">{{ article.title }}</a></p>
+                    <div class="media">
+                        <div class="media-left">
+                            <a href="#">
+                                <img class="media-object author-img" src="/media/{{ article.user.avatar }}" alt="...">
+                            </a>
+                        </div>
+                        <div class="media-body">
+                            <p>{{ article.desc }}</p>
+                        </div>
+                    </div>
+                    <div class="article-footer">
+                        <span><a href="/blog/{{ article.user.username }}/">{{ article.user.username }}</a></span>发布于
+                        <span>{{ article.create_time|date:'Y-m-d H:i:s' }}</span>
+                        {#                            <span class="glyphicon glyphicon-comment">评论({{ article.comment_count }})</span>#}
+                        {#                            <span class="glyphicon glyphicon-thumbs-up">点赞({{ article.up_count }})</span>#}
+                        <span><i class="fa fa-commenting-o fa-fw" aria-hidden="true"></i>评论({{ article.comment_count }})</span>
+                        <span><i class="fa fa-thumbs-o-up fa-fw"
+                                 aria-hidden="true"></i>点赞({{ article.up_count }})</span>
+                         <span><i class="fa fa-thumbs-o-down fa-fw"
+                                 aria-hidden="true"></i>踩({{ article.down_count }})</span>
+                    </div>
+                    <hr>
+                </div>
+            {% endfor %}
+
+        </div>
+        <!-- 个人博客列表 结束-->
+</div>
+</div>
+</div>
+
+<script src="/static/draw_line.js"></script>
+<script src="/static/onclick.js"></script>
+
+</body>
+</html>
