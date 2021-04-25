@@ -78,7 +78,7 @@
                             </li>
                                 <li class="active">
                                 <a href="/blog/">
-                                    <span class="glyphicon glyphicon-pencil"></span> 博客
+                                    <span class="glyphicon glyphicon-pencil"></span> 日记
                                 </a>
                             </li>
                         </ul>
@@ -116,7 +116,7 @@
     <div class="row">
         <div class="col-md-3">
             <div class="panel panel-default">
-                <div class="panel-heading">博客文章分类</div>
+                <div class="panel-heading">日记文章分类</div>
                 <div class="panel-body">
     {% for category in category_list %}
         <p><i class="fa fa-folder-o" aria-hidden="true"></i>&nbsp;<a href="/blog/{{ category.user }}/category/{{ category.title }}/" target="_blank">{{ category.title }}({{ category.article_set.count }})</a></p>

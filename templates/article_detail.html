@@ -40,12 +40,12 @@
                             </li>
                                 <li>
                                 <a href="/blog/">
-                                    <span class="glyphicon glyphicon-pencil"></span> 博客
+                                    <span class="glyphicon glyphicon-pencil"></span> 日记
                                 </a>
                             </li>
                             <li class="active">
                                 <a href="/blog/{{article.user.username }}/">
-                                    <span class="glyphicon glyphicon-pencil"></span>{{ article.user.username }}的博客
+                                    <span class="glyphicon glyphicon-pencil"></span>{{ article.user.username }}的日记
                                 </a>
                             </li>
 
@@ -83,7 +83,7 @@
 {##}
 {#            {% get_left_menu username %}#}
         <div class="panel panel-default">
-<div class="panel-heading">个人博客文章分类</div>
+<div class="panel-heading">个人日记文章分类</div>
 <div class="panel-body">
     {% for category in category_list %}
         <p><i class="fa fa-folder-o" aria-hidden="true"></i>&nbsp;<a href="/blog/{{ username }}/category/{{ category.title }}/" target="_blank">{{ category.title }}({{ category.c }})</a></p>

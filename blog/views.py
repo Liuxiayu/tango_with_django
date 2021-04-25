@@ -132,14 +132,34 @@ def index(request):
     # bar.render(path="static/charts/charts.png")
     #折线图
     #绘制图表
-    from pyecharts import Line
-    line = Line('博客访客分析表')
-    line.add('最近一周博客访问量', list1, list2,
-             mark_point=['average', 'max', 'min'],  # 标注点：平均值，最大值，最小值
-             mark_point_symbol='arrow',  # 标注点：钻石形状
-             mark_point_textcolor='#40ff27',
-             mark_point_symbolsize=40)
-    line.render(path="static/charts/charts.png")
+    import pyecharts.options as opts
+    from pyecharts.charts import Line
+    # line = Line('博客访客分析表')
+    # line.add('最近一周博客访问量', list1, list2,
+    #          mark_point=['average', 'max', 'min'],  # 标注点：平均值，最大值，最小值
+    #          mark_point_symbol='arrow',  # 标注点：钻石形状
+    #          mark_point_textcolor='#40ff27',
+    #          mark_point_symbolsize=40)
+    c = (
+        Line()
+            .add_xaxis(list1)
+            .add_yaxis(
+            "最近一周博客访问量",
+            list2,
+            markline_opts=opts.MarkLineOpts(data=[opts.MarkLineItem(type_="max")]),
+        )
+            .set_global_opts(title_opts=opts.TitleOpts(title="博客访客分析表"))
+    )
+
+    from snapshot_phantomjs import snapshot
+    from pyecharts.render import make_snapshot
+
+
+    make_snapshot(snapshot, c.render(), "static/charts/charts.png")
+
+    # line.render(path="static/charts/charts.png")
+
+
     #总阅读排行
     article_query = models.Article.objects.all().order_by("-read_num")[:10]
     #24小时阅读排行
@@ -176,6 +196,8 @@ def index(request):
     for category in category_list:
         category_rate = ((models.Article.objects.filter(category=category).count()) / (models.Article.objects.all().count())) * 100
         category.rate = round(category_rate, 2)
+        print("print(category)",category)
+        print("print(category.rate)",category.rate)
         category.save()
         category.process_color = color_list[random.randint(0,3)]
 
