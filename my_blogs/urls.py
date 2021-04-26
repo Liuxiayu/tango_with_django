@@ -32,6 +32,8 @@ urlpatterns = [
     url(r'^reg2/$', views.register2),
 
     url(r'^index/', views.index),
+
+
     # 将所有以blog开头的url都交给app下面的urls.py来处理
     url(r'^blog/', include(blog_urls)),
 

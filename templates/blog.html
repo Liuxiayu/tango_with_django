@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>文章首页</title>
+    <title>日记首页</title>
        <link rel="stylesheet" href="/static/mystyle.css">
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.min.css">
@@ -63,7 +63,7 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                          </button>
-                        <a class="navbar-brand" href="/">老几的Blog</a>
+                        <a class="navbar-brand" href="/">xiayu的学习日记</a>
                     </div>
 
 
@@ -82,7 +82,7 @@
                         </ul>
 
                         <form action="/search_article/" class="navbar-form navbar-right" method="post">
-                            <input name="search_article_name" type="text" placeholder="搜索文章" class="form-control">
+                            <input name="search_article_name" type="text" placeholder="搜索日记" class="form-control">
                             <button type="submit">
                                 <span class="glyphicon glyphicon-search"></span>
                             </button>
@@ -91,8 +91,8 @@
                         <ul id="user_part" class="nav navbar-nav navbar-right">
                             {% if request.user.username %}
 
-               <li><a href="/blog/{{ request.user.username }}" target="_blank"><i class="fa fa-user" target="_blank"></i>&nbsp;{{ request.user.username }}</a></li>
-                 <li><a href="/blog/backend/add_article/"  target="_blank"><i class="fa fa-pencil"></i>&nbsp;写文章</a></li>
+                                <li><a><i class="fa fa-user" ></i>&nbsp;{{ request.user.username }}</a></li>
+                 <li><a href="/blog/backend/add_article/"  target="_blank"><i class="fa fa-pencil"></i>&nbsp;写日记</a></li>
                 <li><a href="/logout/"><i class="fa fa-toggle-on"></i>&nbsp;注销</a></li>
 
                                 {% else %}
@@ -113,7 +113,7 @@
     <div class="row row_self">
         <div class="col-md-3">
             <div class="panel panel-default">
-                <div class="panel-heading">日记文章分类</div>
+                <div class="panel-heading">日记分类</div>
                 <div class="panel-body">
                     {% for category in category_list %}
                         <p><i class="fa fa-folder-o" aria-hidden="true"></i>
@@ -178,7 +178,7 @@
         </div>
 
         <div class="col-md-9">
-            <!-- 文章列表 开始 -->
+            <!-- 日记列表 开始 -->
 
             <div class="filter blog-border">
                 <div class="filter-item">
@@ -215,7 +215,7 @@
 
             <form action="/search_article/" method="post">
                 <div class="input-group col-md-4">
-                    <input type="text" class="form-control" name="search_article_name" placeholder="搜索你想要的文章">
+                    <input type="text" class="form-control" name="search_article_name" placeholder="搜索你想要的日记">
                     <span class="input-group-btn"><button class="btn btn-default" type="submit">搜索</button></span>
                 </div><!-- /input-group -->
             </form>
@@ -243,6 +243,12 @@
                             <span>{{ article.create_time|date:'Y-m-d H:i:s' }}</span>
                             {#                            <span class="glyphicon glyphicon-comment">评论({{ article.comment_count }})</span>#}
                             {#                            <span class="glyphicon glyphicon-thumbs-up">点赞({{ article.up_count }})</span>#}
+                            {% if article.user.username == request.user.username %}
+                                <span><a href="/blog/{{ article.user.username }}/article/{{ article.pk }}/edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>编辑</a></span>
+                                <span><a href="/blog/{{ article.user.username }}/article/{{ article.pk }}/delete"> <i class="fa fa-trash-o" aria-hidden="true" style="color: red"></i><span style="color: red">删除</span></a></span>
+
+                            {% endif %}
+
                             <span><i class="fa fa-commenting-o fa-fw"
                                      aria-hidden="true"></i>评论({{ article.comment_count }})</span>
                             <span><i class="fa fa-thumbs-o-up fa-fw"
@@ -255,7 +261,7 @@
                 {% endfor %}
 
             </div>
-            <!-- 文章列表 结束-->
+            <!-- 日记列表 结束-->
 
 
         </div>

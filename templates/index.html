@@ -21,7 +21,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/">xiayuliu的学习日记</a>
+        <a class="navbar-brand" href="/">xiayu的学习日记</a>
     </div>
 
 
@@ -39,7 +39,7 @@
         </ul>
 
         <form action="/search_article/" class="navbar-form navbar-right" method="post">
-            <input name="search_article_name" type="text" placeholder="搜索文章" class="form-control">
+            <input name="search_article_name" type="text" placeholder="搜索日记" class="form-control">
             <button type="submit">
                 <span class="glyphicon glyphicon-search"></span>
             </button>
@@ -48,8 +48,13 @@
         <ul id="user_part" class="nav navbar-nav navbar-right">
             {% if request.user.username %}
 
-               <li><a href="/blog/{{ request.user.username }}" target="_blank"><i class="fa fa-user"></i>&nbsp;{{ request.user.username }}</a></li>
-                 <li><a href="/blog/backend/add_article/" target="_blank"><i class="fa fa-pencil"></i>&nbsp;写文章</a></li>
+                <li><a><i class="fa fa-user"></i>&nbsp;{{ request.user.username }}</a></li>
+
+                 {% if request.user.username == "xiayu" %}
+
+                 <li><a href="/blog/backend/add_article/" target="_blank"><i class="fa fa-pencil"></i>&nbsp;写日记</a></li>
+
+                     {% endif %}
                 <li><a href="/logout/"><i class="fa fa-toggle-on"></i>&nbsp;注销</a></li>
 
                                 {% else %}
@@ -67,8 +72,8 @@
     <div class="container">
 
      <div class="jumbotron">
-  <h1>xiayuliu&nbsp;学习日记</h1>
-<p>xiayuliu的学习日记</p>
+  <h1>xiayu的学习日记</h1>
+<p>welcome to my space !</p>
 </div>
         {#             <p>只为遇见<span class="hidden-xs">更好的</span>你</p>#}
 
@@ -79,7 +84,7 @@
 <h3 class="content-item-title">
     <span class="glyphicon glyphicon-pencil"></span> &nbsp;
     <span class="content-more">
-                共{{ blog_count }}篇文章
+                共{{ blog_count }}篇日记
                 <a href="/blog/">more&gt;</a>
             </span>
 </h3>
@@ -89,7 +94,7 @@
         <h3 class="content-item-title">
     <span class="fa fa-book"></span>
     &nbsp;
-    <span>文章分类</span>
+    <span>日记分类</span>
 {#            <div class="read-content-item" style="">#}
 {#            <ul class="list">#}
 {#                {% for category in category_list %}#}

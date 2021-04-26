@@ -27,7 +27,7 @@
 {##}
 {#            {% get_left_menu username %}#}
         <div class="panel panel-default">
-<div class="panel-heading">文章分类</div>
+<div class="panel-heading">日记分类</div>
 <div class="panel-body">
     {% for category in category_list %}
         <p><a href="/blog/{{ username }}/category/{{ category.title }}/">{{ category.title }}({{ category.c }})</a></p>
@@ -36,7 +36,7 @@
 </div>
 </div>
 <div class="panel panel-default">
-    <div class="panel-heading">文章标签</div>
+    <div class="panel-heading">日记标签</div>
     <div class="panel-body">
         {% for tag in tag_list %}
             <p><a href="/blog/{{ username }}/tag/{{ tag.title }}/">{{ tag.title }}({{ tag.c }})</a></p>

@@ -43,7 +43,7 @@ class Blog(models.Model):
 
 class Category(models.Model):
     """
-    博客文章分类
+    博客日记分类
     """
     nid = models.AutoField(primary_key=True)
     title = models.CharField(max_length=32)  # 分类标题
@@ -55,7 +55,7 @@ class Category(models.Model):
         return self.title
 
     class Meta:
-        verbose_name = "文章分类"
+        verbose_name = "日记分类"
         verbose_name_plural = verbose_name
 
 
@@ -77,11 +77,11 @@ class Tag(models.Model):
 
 class Article(models.Model):
     """
-    文章
+    日记
     """
     nid = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=50, verbose_name="文章标题")  # 文章标题
-    desc = models.CharField(max_length=255)  # 文章描述
+    title = models.CharField(max_length=50, verbose_name="日记标题")  # 日记标题
+    desc = models.CharField(max_length=255)  # 日记描述
     create_time = models.DateTimeField(auto_now_add=True)  # 创建时间
 
     # 评论数
@@ -106,7 +106,7 @@ class Article(models.Model):
         return self.title
 
     class Meta:
-        verbose_name = "文章"
+        verbose_name = "日记"
         verbose_name_plural = verbose_name
 
 
@@ -119,20 +119,20 @@ class Read(models.Model):
 
 class ArticleDetail(models.Model):
     """
-    文章详情表
+    日记详情表
     """
     nid = models.AutoField(primary_key=True)
     content = models.TextField()
     article = models.OneToOneField(to="Article", to_field="nid",on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = "文章详情"
+        verbose_name = "日记详情"
         verbose_name_plural = verbose_name
 
 
 class Article2Tag(models.Model):
     """
-    文章和标签的多对多关系表
+    日记和标签的多对多关系表
     """
     nid = models.AutoField(primary_key=True)
     article = models.ForeignKey(to="Article", to_field="nid",on_delete=models.CASCADE)
@@ -143,7 +143,7 @@ class Article2Tag(models.Model):
 
     class Meta:
         unique_together = (("article", "tag"),)
-        verbose_name = "文章-标签"
+        verbose_name = "日记-标签"
         verbose_name_plural = verbose_name
 
 
@@ -159,7 +159,7 @@ class ArticleUpDown(models.Model):
 
     class Meta:
         unique_together = (("article", "user"),)
-        verbose_name = "文章点赞"
+        verbose_name = "日记点赞"
         verbose_name_plural = verbose_name
 
 

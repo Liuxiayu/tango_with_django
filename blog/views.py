@@ -190,7 +190,7 @@ def index(request):
             break
     category_list = models.Category.objects.all()
     index_visit = models.Index_page.objects.all().count()
-    #文章进度条占比
+    #日记进度条占比
     import random
     color_list = ["progress-bar-success", "progress-bar-info", "progress-bar-warning", "progress-bar-danger"]
     for category in category_list:
@@ -360,19 +360,19 @@ def home(request, username, *args):
     if not user:
         logger.warning("又有人访问不存在页面了...")
         return HttpResponse("404")
-    # 如果用户存在需要将TA写的所有文章找出来
+    # 如果用户存在需要将TA写的所有日记找出来
     blog = user.blog
     print(type(user),type(blog),type(blog.nid))
     if not args:
         logger.debug("args没有接收到参数，默认走的是用户的个人博客页面！")
-        # 我的文章列表
+        # 我的日记列表
         article_list = models.Article.objects.filter(user=user)
-        # 我的文章分类及每个分类下文章数
-        # 将我的文章按照我的分类分组，并统计出每个分类下面的文章数
+        # 我的日记分类及每个分类下日记数
+        # 将我的日记按照我的分类分组，并统计出每个分类下面的日记数
         # category_list = models.Category.objects.filter(blog=blog)
         # category_list = models.Category.objects.filter(blog=blog).annotate(c=Count("article")).values("title", "c")
         # # [{'title': '技术', 'c': 2}, {'title': '生活', 'c': 1}, {'title': 'LOL', 'c': 1}]
-        # # 统计当前站点下有哪一些标签，并且按标签统计出文章数
+        # # 统计当前站点下有哪一些标签，并且按标签统计出日记数
         # tag_list = models.Tag.objects.filter(blog=blog).annotate(c=Count("article")).values("title", "c")
         #
         # # 按日期归档
@@ -382,7 +382,7 @@ def home(request, username, *args):
     else:
         logger.debug(args)
         logger.debug("------------------------------")
-        # 表示按照文章的分类或tag或日期归档来查询
+        # 表示按照日记的分类或tag或日期归档来查询
         # args = ("category", "技术")
         # article_list = models.Article.objects.filter(user=user).filter(category__title="技术")
         if args[0] == "category":
@@ -405,7 +405,7 @@ def home(request, username, *args):
                 return HttpResponse("404")
 
     category_list = models.Category.objects.filter(blog=blog).annotate(c=Count("article")).values("title", "c")
-    # 查文章标签及对应的文章数
+    # 查日记标签及对应的日记数
     tag_list = models.Tag.objects.filter(blog=blog).annotate(c=Count("article")).values("title", "c")
     # 按日期归档
     archive_list = models.Article.objects.filter(user=user).extra(
@@ -437,16 +437,18 @@ def get_left_menu(username):
 def article_detail(request, username, pk):
     """
     :param username: 被访问的blog的用户名
-    :param pk: 访问的文章的主键id值
+    :param pk: 访问的日记的主键id值
     :return:
     """
-    print(request.user)
+    # print(request.user)
     user = models.UserInfo.objects.filter(username=username).first()
     if not user:
         return HttpResponse("404")
     blog = user.blog
-    # 找到当前的文章
+    # 找到当前的日记
     article_obj = models.Article.objects.filter(pk=pk).first()
+    article_detail_obj = models.ArticleDetail.objects.filter(article=article_obj).first()
+    # print("article_detail_obj.content",article_detail_obj.content)
     models.Read.objects.create(article=article_obj)
     # if read_obj:
     #     read_obj.read_num = read_obj.read_num + 1
@@ -459,17 +461,106 @@ def article_detail(request, username, pk):
 
     # 所有评论列表
     comment_list=models.Comment.objects.filter(article_id=pk)
-    # 查询文章分类及对应的文章数
+    # 查询日记分类及对应的日记数
     category_list = models.Category.objects.filter(blog=blog).annotate(c=Count("article")).values("title", "c")
-    # 查文章标签及对应的文章数
+    # 查日记标签及对应的日记数
     tag_list = models.Tag.objects.filter(blog=blog).annotate(c=Count("article")).values("title", "c")
 
     # 按日期归档
     archive_list = models.Article.objects.filter(user=user).extra(
         select={"archive_ym": "date_format(create_time,'%%Y-%%m')"}
     ).values("archive_ym").annotate(c=Count("nid")).values("archive_ym", "c")
+    import markdown
 
-    return render(request,"article_detail.html",{"username": username,"article": article_obj,"blog": blog,"comment_list":comment_list,"category_list": category_list,"tag_list": tag_list,"archive_list": archive_list})
+    article_content = article_detail_obj.content
+
+    article_content = markdown.markdown(article_content,
+                      extensions=[
+                          'markdown.extensions.extra',
+                          'markdown.extensions.codehilite',
+                          'markdown.extensions.toc',
+                      ])
+
+    return render(request,"article_detail.html",{"username": username,"article_content":article_content,"article": article_obj,"blog": blog,"comment_list":comment_list,"category_list": category_list,"tag_list": tag_list,"archive_list": archive_list})
+
+def edit_article_detail(request, username, pk):
+    """
+    :param username: 被访问的blog的用户名
+    :param pk: 访问的日记的主键id值
+    :return:
+    """
+    print("11111111")
+    if request.method != "POST":
+        print("edit_article_detail edit_article_detail")
+        print("request.user:::",request.user)
+
+        user = models.UserInfo.objects.filter(username=username).first()
+        if not user:
+            return HttpResponse("404")
+        blog = user.blog
+        # 找到当前的日记
+        article_obj = models.Article.objects.filter(pk=pk).first()
+        category = article_obj.category.title
+        title = article_obj.title
+        article_detail_obj = models.ArticleDetail.objects.filter(article=article_obj).first()
+
+        return render(request, "edit_article_detail.html",{"gen_content":article_detail_obj.content, "title":title , "category": category})
+
+    else:
+        title = request.POST.get("title")
+        category = request.POST.get("category")
+        print(category)
+        article_content = request.POST.get("article_content")
+        user = request.user
+        print(user,type(user),user.username)
+        username = user.username
+        user = models.UserInfo.objects.filter(username=username).first()
+        blog = user.blog
+        print(type(blog))
+        print(user, type(user),type(blog), user.username)
+        if not models.Category.objects.filter(title=category):
+            models.Category.objects.create(title=category,blog_id=blog.nid)
+        bs = BeautifulSoup(article_content,"html.parser")
+        print(3)
+        print(str(bs.text)[0:150])
+        desc = str(bs.text)[0:150]+"..."
+        print(1)
+        category_obj = models.Category.objects.filter(title=category).first()
+        article_obj = models.Article.objects.filter(pk=pk).first()
+        article_obj.user = user
+        article_obj.category = category_obj
+        article_obj.title = title
+        article_obj.desc = desc
+        article_obj.save()
+        article_detail_obj = models.ArticleDetail.objects.filter(article=article_obj).first()
+        article_detail_obj.content = article_content
+        article_detail_obj.article = article_obj
+        article_detail_obj.save()
+
+        return redirect("/blog/" + username +"/article/" + pk)
+
+def delete_article_detail(request, username, pk):
+    """
+    :param username: 被访问的blog的用户名
+    :param pk: 访问的日记的主键id值
+    :return:
+    """
+    print("11111111")
+    if request.method != "POST":
+        print("edit_article_detail edit_article_detail")
+        print("request.user:::",request.user)
+
+        user = models.UserInfo.objects.filter(username=username).first()
+        if not user:
+            return HttpResponse("404")
+        blog = user.blog
+        # 找到当前的日记
+        article_obj = models.Article.objects.filter(pk=pk).first()
+        article_detail_obj = models.ArticleDetail.objects.filter(article=article_obj).first()
+        article_detail_obj.delete()
+        article_obj.delete()
+        return redirect("/blog/")
+
 
 
 import json
@@ -638,7 +729,7 @@ def add_article(request):
             print(2)
             models.ArticleDetail.objects.create(content=article_content,article=article_obj)
             return redirect("/blog/"+ username + "/")
-        return render(request,"add_article.html")
+        return render(request,"add_article.html",{"gen_content":""})
     else:
         return redirect("/login/")
 
@@ -728,7 +819,7 @@ def login3(request):
     return render(request, "login3.html")
 
 def blog(request):
-    # 查询所有的文章列表
+    # 查询所有的日记列表
     # article_list = models.Article.objects.all()
     # index_page_obj = models.Index_page.objects.filter(id=1).first()
     # index_page_obj.visit_num = index_page_obj.visit_num + 1

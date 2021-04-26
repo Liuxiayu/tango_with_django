@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>文章分类</title>
+    <title>日记分类</title>
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.min.css">
      <link rel="stylesheet" href="/static/mystyle.css">
@@ -65,7 +65,7 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                          </button>
-                        <a class="navbar-brand" href="/">老几的Blog</a>
+                        <a class="navbar-brand" href="/">xiayu的学习日记</a>
                     </div>
 
 
@@ -93,8 +93,10 @@
                         <ul id="user_part" class="nav navbar-nav navbar-right">
                             {% if request.user.username %}
 
-                  <li><a href="/blog/{{ request.user.username }}" target="_blank"><i class="fa fa-user"></i>&nbsp;{{ request.user.username }}</a></li>
-                 <li><a href="/blog/backend/add_article/" target="_blank"><i class="fa fa-pencil"></i>&nbsp;写文章</a></li>
+                                <li><a><i class="fa fa-user"></i>&nbsp;{{ request.user.username }}</a></li>
+                         {% if request.user.username == "xiayu" %}
+                 <li><a href="/blog/backend/add_article/" target="_blank"><i class="fa fa-pencil"></i>&nbsp;写日记</a></li>
+                     {% endif %}
                 <li><a href="/logout/"><i class="fa fa-toggle-on"></i>&nbsp;注销</a></li>
                                 {% else %}
                                 <li><a href="/login/"><i class="fa fa-toggle-off"></i>&nbsp;登录</a></li>
@@ -116,7 +118,7 @@
     <div class="row">
         <div class="col-md-3">
             <div class="panel panel-default">
-                <div class="panel-heading">日记文章分类</div>
+                <div class="panel-heading">日记分类</div>
                 <div class="panel-body">
     {% for category in category_list %}
         <p><i class="fa fa-folder-o" aria-hidden="true"></i>&nbsp;<a href="/blog/{{ category.user }}/category/{{ category.title }}/" target="_blank">{{ category.title }}({{ category.article_set.count }})</a></p>
@@ -175,7 +177,7 @@
         </div>
 
         <div class="col-md-9">
-            <!-- 文章列表 开始 -->
+            <!-- 日记列表 开始 -->
         <div class="filter blog-border">
         <div class="filter-item">
 {#            <div class="btn-group">#}
@@ -272,7 +274,7 @@
 
                    <form action="/search_article/" method="post">
                             <div class="input-group col-md-4">
-                                <input type="text" class="form-control"  name="search_article_name" placeholder="搜索你想要的文章" >
+                                <input type="text" class="form-control"  name="search_article_name" placeholder="搜索你想要的日记" >
                                 <span class="input-group-btn"><button class="btn btn-default" type="submit" >搜索</button></span>
                             </div><!-- /input-group -->
                                 </form>
@@ -306,7 +308,7 @@
                 {% endfor %}
 
             </div>
-            <!-- 文章列表 结束-->
+            <!-- 日记列表 结束-->
 
 
 

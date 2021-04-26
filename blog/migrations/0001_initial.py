@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
             name='Article',
             fields=[
                 ('nid', models.AutoField(primary_key=True, serialize=False)),
-                ('title', models.CharField(max_length=50, verbose_name='文章标题')),
+                ('title', models.CharField(max_length=50, verbose_name='日记标题')),
                 ('desc', models.CharField(max_length=255)),
                 ('create_time', models.DateTimeField(auto_now_add=True)),
                 ('comment_count', models.IntegerField(default=0, verbose_name='评论数')),
@@ -58,8 +58,8 @@ class Migration(migrations.Migration):
                 ('category_read_num', models.IntegerField(default=0, verbose_name='分类阅读数')),
             ],
             options={
-                'verbose_name': '文章',
-                'verbose_name_plural': '文章',
+                'verbose_name': '日记',
+                'verbose_name_plural': '日记',
             },
         ),
         migrations.CreateModel(
@@ -130,8 +130,8 @@ class Migration(migrations.Migration):
                 ('blog', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='blog.blog')),
             ],
             options={
-                'verbose_name': '文章分类',
-                'verbose_name_plural': '文章分类',
+                'verbose_name': '日记分类',
+                'verbose_name_plural': '日记分类',
             },
         ),
         migrations.CreateModel(
@@ -142,8 +142,8 @@ class Migration(migrations.Migration):
                 ('article', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='blog.article')),
             ],
             options={
-                'verbose_name': '文章详情',
-                'verbose_name_plural': '文章详情',
+                'verbose_name': '日记详情',
+                'verbose_name_plural': '日记详情',
             },
         ),
         migrations.CreateModel(
@@ -154,8 +154,8 @@ class Migration(migrations.Migration):
                 ('tag', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='blog.tag')),
             ],
             options={
-                'verbose_name': '文章-标签',
-                'verbose_name_plural': '文章-标签',
+                'verbose_name': '日记-标签',
+                'verbose_name_plural': '日记-标签',
                 'unique_together': {('article', 'tag')},
             },
         ),
@@ -198,8 +198,8 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'verbose_name': '文章点赞',
-                'verbose_name_plural': '文章点赞',
+                'verbose_name': '日记点赞',
+                'verbose_name_plural': '日记点赞',
                 'unique_together': {('article', 'user')},
             },
         ),

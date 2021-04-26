@@ -11,9 +11,12 @@
         <link rel="icon" href="/static/img/whale.ico" type="images/x-ico" />
     <script src="/static/jquery-3.3.1.js"></script>
     <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
+
 
 </head>
 <body>
+ <script src="/static/markdown-js/lib/index.js"></script>
 
 {#<div class="header">#}
 {#    <p>{{ blog.title }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ><a href="/index/" class="index1">网站首页</a></span>#}
@@ -27,7 +30,7 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                          </button>
-                        <a class="navbar-brand" href="/">老几的Blog</a>
+                        <a class="navbar-brand" href="/">xiayu的学习日记</a>
                     </div>
 
 
@@ -43,16 +46,16 @@
                                     <span class="glyphicon glyphicon-pencil"></span> 日记
                                 </a>
                             </li>
-                            <li class="active">
-                                <a href="/blog/{{article.user.username }}/">
-                                    <span class="glyphicon glyphicon-pencil"></span>{{ article.user.username }}的日记
-                                </a>
-                            </li>
+{#                            <li class="active">#}
+{#                                <a href="/blog/{{article.user.username }}/">#}
+{#                                    <span class="glyphicon glyphicon-pencil"></span>{{ article.user.username }}的日记#}
+{#                                </a>#}
+{#                            </li>#}
 
                         </ul>
 
                         <form action="/search_article/" class="navbar-form navbar-right" method="post">
-                            <input name="search_article_name" type="text" placeholder="搜索文章" class="form-control">
+                            <input name="search_article_name" type="text" placeholder="搜索日记" class="form-control">
                             <button type="submit">
                                 <span class="glyphicon glyphicon-search"></span>
                             </button>
@@ -60,8 +63,10 @@
 
                         <ul id="user_part" class="nav navbar-nav navbar-right">
                             {% if request.user.username %}
-               <li><a href="/blog/{{ request.user.username }}" target="_blank"><i class="fa fa-user" ></i>&nbsp;{{ request.user.username }}</a></li>
-                 <li><a href="/blog/backend/add_article/" target="_blank"><i class="fa fa-pencil"></i>&nbsp;写文章</a></li>
+                                <li><a><i class="fa fa-user" ></i>&nbsp;{{ request.user.username }}</a></li>
+                         {% if request.user.username == "xiayu" %}
+                 <li><a href="/blog/backend/add_article/" target="_blank"><i class="fa fa-pencil"></i>&nbsp;写日记</a></li>
+                     {% endif %}
                 <li><a href="/logout/"><i class="fa fa-toggle-on"></i>&nbsp;注销</a></li>
 
                                 {% else %}
@@ -83,7 +88,7 @@
 {##}
 {#            {% get_left_menu username %}#}
         <div class="panel panel-default">
-<div class="panel-heading">个人日记文章分类</div>
+<div class="panel-heading">个人日记分类</div>
 <div class="panel-body">
     {% for category in category_list %}
         <p><i class="fa fa-folder-o" aria-hidden="true"></i>&nbsp;<a href="/blog/{{ username }}/category/{{ category.title }}/" target="_blank">{{ category.title }}({{ category.c }})</a></p>
@@ -92,7 +97,7 @@
 </div>
 </div>
 {#<div class="panel panel-default">#}
-{#    <div class="panel-heading">文章标签</div>#}
+{#    <div class="panel-heading">日记标签</div>#}
 {#    <div class="panel-body">#}
 {#        {% for tag in tag_list %}#}
 {#            <p><a href="/blog/{{ username }}/tag/{{ tag.title }}/">{{ tag.title }}({{ tag.c }})</a></p>#}
@@ -112,9 +117,17 @@
 
         </div>
         <div class="col-md-10">
-            <div class="article-detail">
-        <h1>{{ article.title }}</h1>
-        <p>{{ article.articledetail.content|safe }}</p>
+
+        <h2>{{ article.title }}</h2>
+             <div class="article-detail">
+        <p id="mycontent" oninput="this.editor.update()"
+            >{{ article_content|safe }}</p>
+
+                  <div id="preview"> </div>
+
+
+
+
     </div>
 
     <div class="poll clearfix">
@@ -129,7 +142,6 @@
             <div class="diggword" id="digg_tips" style="color: red;"></div>
         </div>
     </div>
-
 
     {#    <p>评论树</p>#}
     {#    <div class="comment_tree"></div>#}
@@ -184,6 +196,7 @@
 
 
     {% csrf_token %}
+
     <script>
         $("#div_digg .action").click(function () {
             // 点赞或踩灭
@@ -336,6 +349,8 @@
             pid = $(this).attr("comment_pk");
         })
     </script>
+
+
     <script src="/static/wangEditor.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="/static/wangEditor.js"></script>
@@ -353,6 +368,9 @@
     </script>
         </div>
     </div>
+
+
+
 
 
 <script src="/static/draw_line.js"></script>

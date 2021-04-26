@@ -9,9 +9,9 @@ register = template.Library()
 def get_left_menu(username):
     user = models.UserInfo.objects.filter(username=username).first()
     blog = user.blog
-    # 查询文章分类及对应的文章数
+    # 查询日记分类及对应的日记数
     category_list = models.Category.objects.filter(blog=blog).annotate(c=Count("article")).values("title", "c")
-    # 查文章标签及对应的文章数
+    # 查日记标签及对应的日记数
     tag_list = models.Tag.objects.filter(blog=blog).annotate(c=Count("article")).values("title", "c")
 
     # 按日期归档
